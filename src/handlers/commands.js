@@ -4,7 +4,7 @@
 //  Command Handlers — /start, /help, /platforms, /about
 // ─────────────────────────────────────────────────────────────────────────────
 
-const { BOT_NAME, BOT_VERSION, SUPPORTED_PLATFORMS, BLOCKED_PLATFORMS } = require('../../config/constants');
+const { BOT_NAME, BOT_VERSION, SUPPORTED_PLATFORMS } = require('../../config/constants');
 const { esc } = require('../utils/helpers');
 
 // ── /start ────────────────────────────────────────────────────────────────────
@@ -34,16 +34,14 @@ async function onHelp(ctx) {
     `*Step 2:* Main thumbnail \\+ title \\+ available qualities dikhaunga\n` +
     `*Step 3:* Quality button press karo\n` +
     `*Step 4:* File seedha Telegram pe mil jayegi ✅\n\n` +
-    `─────────────────────\n` +
     `📦 *File size limit:* 50 MB \\(Telegram limit\\)\n` +
     `⏱ *Session timeout:* 10 minutes\n` +
-    `🚦 *Rate limit:* 4 requests per minute\n` +
-    `─────────────────────\n` +
+    `🚦 *Rate limit:* 4 requests per minute\n\n` +
     `❌ *Kaam nahi karta:*\n` +
     `• YouTube, Instagram \\(blocked\\)\n` +
-    `• Private / login\\-required videos\n` +
-    `• DRM\\-protected content\n` +
-    `• 50MB+ files\n\n` +
+    `• Private / login required videos\n` +
+    `• DRM protected content\n` +
+    `• Files over 50 MB\n\n` +
     `/platforms — Supported sites ki list`,
     { parse_mode: 'MarkdownV2' }
   );
@@ -55,15 +53,9 @@ async function onPlatforms(ctx) {
     .map((p) => `${p.emoji} *${esc(p.name)}* — \`${esc(p.domain)}\``)
     .join('\n');
 
-  const blockedLines = BLOCKED_PLATFORMS
-    .map((p) => `${p.emoji} ~~${esc(p.name)}~~`)
-    .join('  ');
-
   await ctx.reply(
     `📋 *Supported Platforms*\n\n` +
     `${supportedLines}\n\n` +
-    `─────────────────────\n` +
-    `❌ *Blocked:* ${blockedLines}\n\n` +
     `_yt\\-dlp support karta hai 1000\\+ sites — agar koi link kaam na kare toh try karke dekho\\!_`,
     { parse_mode: 'MarkdownV2' }
   );

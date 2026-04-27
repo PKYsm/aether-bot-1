@@ -26,21 +26,12 @@ module.exports = {
   YTDLP_BIN: 'yt-dlp',
 
   // Platforms explicitly blocked
-  BLOCKED_PLATFORMS: [
-    {
-      name: 'YouTube',
-      emoji: '🔴',
-      domains: ['youtube.com', 'youtu.be', 'youtube-nocookie.com', 'yt.be', 'music.youtube.com'],
-    },
-    {
-      name: 'Instagram',
-      emoji: '📸',
-      domains: ['instagram.com', 'instagr.am'],
-    },
-  ],
+  BLOCKED_PLATFORMS: [],
 
   // Platforms with known yt-dlp support (for /platforms command display)
   SUPPORTED_PLATFORMS: [
+    { name: 'YouTube',       emoji: '🔴', domain: 'youtube.com / youtu.be' },
+    { name: 'Instagram',     emoji: '📸', domain: 'instagram.com' },
     { name: 'Twitter / X',   emoji: '🐦', domain: 'twitter.com / x.com' },
     { name: 'TikTok',        emoji: '🎵', domain: 'tiktok.com' },
     { name: 'Reddit',        emoji: '🤖', domain: 'reddit.com' },

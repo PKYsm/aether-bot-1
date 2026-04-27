@@ -97,6 +97,11 @@ function detectPlatform(url) {
     'clips.twitch.tv': { name: 'Twitch Clip', emoji: '🟣' },
     'fb.com': { name: 'Facebook', emoji: '📘' },
     'fb.watch': { name: 'Facebook', emoji: '📘' },
+    'youtu.be': { name: 'YouTube', emoji: '🔴' },
+    'youtube-nocookie.com': { name: 'YouTube', emoji: '🔴' },
+    'music.youtube.com': { name: 'YouTube Music', emoji: '🎵' },
+    'yt.be': { name: 'YouTube', emoji: '🔴' },
+    'instagr.am': { name: 'Instagram', emoji: '📸' },
   };
 
   for (const [key, val] of Object.entries(overrides)) {

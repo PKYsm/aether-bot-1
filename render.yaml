@@ -1,9 +1,10 @@
 services:
-  - type: worker
+  - type: web
     name: aether-bot
     runtime: node
     buildCommand: apt-get install -y ffmpeg && pip install yt-dlp && npm install
     startCommand: node src/index.js
+    healthCheckPath: /health
     envVars:
       - key: BOT_TOKEN
         sync: false
