@@ -93,7 +93,16 @@ class NoFormatsError extends AetherError {
   }
 }
 
-class RateLimitError extends AetherError {
+class InstagramLoginError extends AetherError {
+  constructor() {
+    super(
+      'Instagram requires login/cookies',
+      `📸 *Instagram* ne yeh content serve karne se mana kar diya\\.\n\n` +
+      `Public reels ke liye cookies setup karni padegi\\. Bot owner se contact karo\\.`,
+      'INSTAGRAM_LOGIN'
+    );
+  }
+}
   constructor(waitSecs) {
     super(
       'Rate limit exceeded',
@@ -124,6 +133,9 @@ function parseYtdlpError(stderr) {
   if (s.includes('private video') || s.includes('login required') || s.includes('sign in'))
     return new PrivateVideoError();
 
+  if (s.includes('instagram') && (s.includes('login') || s.includes('checkpoint') || s.includes('cookies') || s.includes('challenge') || s.includes('401') || s.includes('not available')))
+    return new InstagramLoginError();
+
   if (s.includes('geo') || s.includes('not available in your country') || s.includes('region'))
     return new GeoRestrictedError();
 
@@ -153,5 +165,6 @@ module.exports = {
   NoFormatsError,
   RateLimitError,
   ActiveDownloadError,
+  InstagramLoginError,
   parseYtdlpError,
 };

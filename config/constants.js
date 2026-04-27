@@ -25,6 +25,10 @@ module.exports = {
   // yt-dlp binary name (must be in PATH)
   YTDLP_BIN: 'yt-dlp',
 
+  // Optional cookies.txt path — needed for Instagram, Facebook private, etc.
+  // Set COOKIES_FILE env var to the absolute path of your Netscape cookies.txt
+  COOKIES_FILE: process.env.COOKIES_FILE || null,
+
   // Platforms explicitly blocked
   BLOCKED_PLATFORMS: [],
 

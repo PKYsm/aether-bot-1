@@ -9,7 +9,54 @@ const { promisify } = require('util');
 
 const execFileAsync = promisify(execFile);
 
-const { YTDLP_BIN, META_FETCH_TIMEOUT_MS } = require('../../config/constants');
+const { YTDLP_BIN, META_FETCH_TIMEOUT_MS, COOKIES_FILE } = require('../../config/constants');
+
+// Instagram requires specific headers to avoid login wall
+const INSTAGRAM_HEADERS = [
+  'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+  'Accept-Language: en-US,en;q=0.9',
+  'Accept: */*',
+  'Referer: https://www.instagram.com/',
+];
+
+/**
+ * Returns true if URL is an Instagram link
+ */
+function isInstagram(url) {
+  try {
+    const host = new URL(url).hostname.replace('www.', '');
+    return host === 'instagram.com' || host.endsWith('.instagram.com') || host === 'instagr.am';
+  } catch { return false; }
+}
+
+/**
+ * Builds yt-dlp args array with platform-specific options
+ */
+function buildMetaArgs(url) {
+  const args = [
+    '--dump-json',
+    '--no-playlist',
+    '--no-warnings',
+    '--socket-timeout', '15',
+  ];
+
+  // Cookies file (works for all platforms — Instagram, Facebook private, etc.)
+  if (COOKIES_FILE) {
+    args.push('--cookies', COOKIES_FILE);
+  }
+
+  // Instagram-specific: inject headers to bypass login wall for public content
+  if (isInstagram(url)) {
+    for (const header of INSTAGRAM_HEADERS) {
+      args.push('--add-headers', header);
+    }
+    // Try to extract without login first; yt-dlp handles public reels fine with headers
+    args.push('--extractor-args', 'instagram:app_id=936619743392459');
+  }
+
+  args.push(url);
+  return args;
+}
 const { MetaFetchTimeoutError, UnsupportedSiteError, parseYtdlpError } = require('./errors');
 const logger = require('./logger');
 
@@ -25,13 +72,7 @@ async function fetchMeta(url) {
   try {
     ({ stdout, stderr } = await execFileAsync(
       YTDLP_BIN,
-      [
-        '--dump-json',
-        '--no-playlist',
-        '--no-warnings',
-        '--socket-timeout', '15',
-        url,
-      ],
+      buildMetaArgs(url),
       { timeout: META_FETCH_TIMEOUT_MS }
     ));
   } catch (err) {

@@ -8,7 +8,21 @@ const { spawn } = require('child_process');
 const path  = require('path');
 const fs    = require('fs');
 
-const { YTDLP_BIN, TEMP_DIR, MAX_FILE_SIZE_BYTES, DOWNLOAD_TIMEOUT_MS } = require('../../config/constants');
+const { YTDLP_BIN, TEMP_DIR, MAX_FILE_SIZE_BYTES, DOWNLOAD_TIMEOUT_MS, COOKIES_FILE } = require('../../config/constants');
+
+const INSTAGRAM_HEADERS = [
+  'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+  'Accept-Language: en-US,en;q=0.9',
+  'Accept: */*',
+  'Referer: https://www.instagram.com/',
+];
+
+function isInstagram(url) {
+  try {
+    const host = new URL(url).hostname.replace('www.', '');
+    return host === 'instagram.com' || host.endsWith('.instagram.com') || host === 'instagr.am';
+  } catch { return false; }
+}
 const { FileTooLargeError, DownloadTimeoutError, parseYtdlpError } = require('./errors');
 const { formatSize } = require('./helpers');
 const logger = require('./logger');
@@ -38,6 +52,19 @@ function download(url, height, audioOnly = false) {
       '--socket-timeout', '20',
       '-o', outTpl,
     ];
+
+    // Cookies file (Instagram private, Facebook, etc.)
+    if (COOKIES_FILE) {
+      args.push('--cookies', COOKIES_FILE);
+    }
+
+    // Instagram-specific headers to bypass login wall for public content
+    if (isInstagram(url)) {
+      for (const header of INSTAGRAM_HEADERS) {
+        args.push('--add-headers', header);
+      }
+      args.push('--extractor-args', 'instagram:app_id=936619743392459');
+    }
 
     if (audioOnly) {
       args.push('-x', '--audio-format', 'mp3', '--audio-quality', '0');

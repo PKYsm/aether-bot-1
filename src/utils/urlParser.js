@@ -12,7 +12,12 @@ const URL_REGEX =
 // Tracking / junk query params to strip for cleaner URLs
 const JUNK_PARAMS = [
   'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
-  'fbclid', 'gclid', 'ref', 'referrer', 'si', // Spotify/TikTok share id
+  'fbclid', 'gclid', 'ref', 'referrer',
+  'si',           // Spotify / TikTok share id
+  'igsh',         // Instagram share token
+  'igshid',       // Instagram share id (older)
+  's',            // Twitter/X share param
+  'feature',      // YouTube feature param
 ];
 
 /**
