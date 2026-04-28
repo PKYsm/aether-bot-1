@@ -103,6 +103,7 @@ class InstagramLoginError extends AetherError {
     );
   }
 }
+class RateLimitError extends AetherError {
   constructor(waitSecs) {
     super(
       'Rate limit exceeded',
