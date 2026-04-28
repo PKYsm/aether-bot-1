@@ -55,7 +55,13 @@ startServer();
 
 bot.launch()
   .then(() => {
-    logger.info('Startup', `${BOT_NAME} v${BOT_VERSION} is running ✅`);
+    logger.startup({
+      'Bot':          'Aether v1.0.0',
+      'Status':       '✅ Running (long-polling)',
+      'Cookies':      process.env.COOKIES_FILE || '❌ Not set',
+      'Owner ID':     process.env.OWNER_ID     || '❌ Not set',
+      'Log Level':    process.env.LOG_LEVEL    || 'debug',
+    });
   })
   .catch((err) => {
     logger.error('Startup', 'Failed to launch bot', { err: err.message });

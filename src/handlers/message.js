@@ -43,7 +43,8 @@ async function handleMessage(ctx) {
   const url = normalizeUrl(rawUrl);
   const platform = detectPlatform(url);
 
-  logger.info('MessageHandler', `Link received`, { url: url.slice(0, 80), platform: platform.name, chatId });
+  logger.separator();
+  logger.userAction(ctx, 'Link received', { url: url.slice(0, 100), platform: platform.name });
 
   // ── Show loading state ───────────────────────────────────────────────────
   const loadingMsg = await ctx.reply(

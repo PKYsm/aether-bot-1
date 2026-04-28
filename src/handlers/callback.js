@@ -47,7 +47,10 @@ async function handleCallback(ctx) {
   const height   = data.startsWith('dl:video:') ? parseInt(data.split(':')[2], 10) : null;
   const label    = isAudio ? '🎵 Audio (MP3)' : `📹 ${height}p`;
 
-  logger.info('CallbackHandler', `Download requested`, { label, chatId, url: meta.url.slice(0, 60) });
+  logger.userAction(ctx, `Download requested: ${label}`, { url: meta.url.slice(0, 80) });
+
+  logger.separator();
+  logger.userAction(ctx, `Button pressed: ${data}`, { chatId, url: meta?.url?.slice(0, 80) });
 
   // ── Disable keyboard (prevent double-clicks) ─────────────────────────────
   await disableKeyboard(ctx);
