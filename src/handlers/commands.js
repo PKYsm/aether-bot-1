@@ -61,7 +61,31 @@ async function onPlatforms(ctx) {
   );
 }
 
-// ── /about ────────────────────────────────────────────────────────────────────
+// ── /continue ─────────────────────────────────────────────────────────────────
+async function onContinue(ctx) {
+  const { getMeta } = require('../utils/sessionStore');
+  const { buildKeyboardRows } = require('./message');
+  const { Markup } = require('telegraf');
+
+  const chatId = ctx.chat?.id;
+  const meta   = getMeta(chatId);
+
+  if (!meta) {
+    return ctx.reply(
+      '🔗 Koi active session nahi hai\\.\n\nNaya link bhejo\\.',
+      { parse_mode: 'MarkdownV2' }
+    );
+  }
+
+  const rows = buildKeyboardRows(meta);
+  const sentMsg = await ctx.reply(
+    `📌 *${esc(truncate(meta.title, 60))}*\n\n👇 *Quality select karo:*`,
+    { parse_mode: 'MarkdownV2', ...Markup.inlineKeyboard(rows) }
+  );
+
+  const { setKeyboardMsgId } = require('../utils/sessionStore');
+  setKeyboardMsgId(chatId, sentMsg.message_id);
+}
 async function onAbout(ctx) {
   await ctx.reply(
     `✨ *${esc(BOT_NAME)} v${esc(BOT_VERSION)}*\n\n` +
@@ -75,4 +99,4 @@ async function onAbout(ctx) {
   );
 }
 
-module.exports = { onStart, onHelp, onPlatforms, onAbout };
+module.exports = { onStart, onHelp, onPlatforms, onAbout, onContinue };

@@ -4,11 +4,11 @@ require('dotenv').config();
 
 const { Telegraf } = require('telegraf');
 const logger = require('./utils/logger');
-const { onStart, onHelp, onPlatforms, onAbout } = require('./handlers/commands');
+const { onStart, onHelp, onPlatforms, onAbout, onContinue } = require('./handlers/commands');
 const { handleMessage } = require('./handlers/message');
 const { handleCallback } = require('./handlers/callback');
 const { BOT_NAME, BOT_VERSION } = require('../config/constants');
-const { startServer } = require('./server');
+const { isWatermarkEnabled, WATERMARK_PATH } = require('./utils/watermark');
 
 // ── Validate environment ─────────────────────────────────────────────────────
 if (!process.env.BOT_TOKEN) {
@@ -33,6 +33,7 @@ bot.start(onStart);
 bot.help(onHelp);
 bot.command('platforms', onPlatforms);
 bot.command('about', onAbout);
+bot.command('continue', onContinue);
 
 // ── Message & Callback handlers ───────────────────────────────────────────────
 bot.on('text', handleMessage);
@@ -59,6 +60,7 @@ bot.launch()
       'Bot':          'Aether v1.0.0',
       'Status':       '✅ Running (long-polling)',
       'Cookies':      process.env.COOKIES_FILE || '❌ Not set',
+      'Watermark':    isWatermarkEnabled() ? `✅ ${WATERMARK_PATH}` : '❌ Not set (assets/watermark.png)',
       'Owner ID':     process.env.OWNER_ID     || '❌ Not set',
       'Log Level':    process.env.LOG_LEVEL    || 'debug',
     });
