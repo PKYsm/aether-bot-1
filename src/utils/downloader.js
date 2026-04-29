@@ -73,15 +73,43 @@ function download(url, height, audioOnly = false) {
 
     // Quality / format
     if (audioOnly) {
-      args.push('-x', '--audio-format', 'mp3', '--audio-quality', '0');
+      args.push(
+        '-x',
+        '--audio-format', 'mp3',
+        '--audio-quality', '0',
+      );
     } else if (height) {
+      // Priority chain:
+      // 1. Best h264 video <= height + best m4a audio (most compatible, no black screen)
+      // 2. Best any-codec video <= height + best audio
+      // 3. Best single-file format <= height that has BOTH video and audio
+      // 4. Absolute fallback
+      // vcodec!="none" & acodec!="none" guards prevent thumbnail-only / black screen formats
       args.push(
         '-f',
-        `bestvideo[height<=${height}][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=${height}]+bestaudio/best[height<=${height}]/best`,
+        [
+          `bestvideo[height<=${height}][vcodec^=avc1][ext=mp4]+bestaudio[ext=m4a]`,
+          `bestvideo[height<=${height}][vcodec!="none"][ext=mp4]+bestaudio[ext=m4a]`,
+          `bestvideo[height<=${height}][vcodec!="none"]+bestaudio[acodec!="none"]`,
+          `best[height<=${height}][vcodec!="none"][acodec!="none"]`,
+          `best[height<=${height}]`,
+          'best',
+        ].join('/'),
         '--merge-output-format', 'mp4',
       );
     } else {
-      args.push('-f', 'bestvideo+bestaudio/best', '--merge-output-format', 'mp4');
+      // No specific height requested — best quality with same guards
+      args.push(
+        '-f',
+        [
+          `bestvideo[vcodec^=avc1][ext=mp4]+bestaudio[ext=m4a]`,
+          `bestvideo[vcodec!="none"][ext=mp4]+bestaudio[ext=m4a]`,
+          `bestvideo[vcodec!="none"]+bestaudio[acodec!="none"]`,
+          `best[vcodec!="none"][acodec!="none"]`,
+          'best',
+        ].join('/'),
+        '--merge-output-format', 'mp4',
+      );
     }
 
     args.push(url);

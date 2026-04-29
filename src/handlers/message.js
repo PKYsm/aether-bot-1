@@ -111,7 +111,7 @@ async function handleMessage(ctx) {
   const platformLine = `${platform.emoji} ${esc(platform.name)}`;
   const uploaderLine = meta.uploader ? `👤 ${esc(truncate(meta.uploader, 40))}` : null;
   const durationLine = meta.duration ? `⏱ ${esc(formatDuration(meta.duration))}` : null;
-  const sizeLine     = meta.estimatedSize ? `💾 ~${esc(formatSize(meta.estimatedSize))}` : null;
+  const sizeLine     = meta.estimatedSize ? `💾 \\~${esc(formatSize(meta.estimatedSize))}` : null;
   const qualLine     = meta.videoHeights.length
     ? `📊 ${meta.videoHeights.map((h) => `${h}p`).join(' • ')}`
     : null;

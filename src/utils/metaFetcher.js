@@ -109,8 +109,16 @@ async function fetchMeta(url) {
   const formats = info.formats || [];
 
   // ── Video qualities ───────────────────────────────────────────────────────
+  // Only include formats that are actual video streams:
+  // - vcodec must exist and not be "none"
+  // - fps > 0 (thumbnails/images have fps=0 or null — this is the key guard)
+  // - height >= 144
   const rawHeights = formats
-    .filter((f) => f.vcodec && f.vcodec !== 'none' && f.height && f.height >= 144)
+    .filter((f) =>
+      f.vcodec && f.vcodec !== 'none' &&
+      f.height && f.height >= 144 &&
+      f.fps && f.fps > 0
+    )
     .map((f) => f.height);
   const videoHeights = [...new Set(rawHeights)].sort((a, b) => a - b);
 

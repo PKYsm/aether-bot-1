@@ -25,9 +25,12 @@ module.exports = {
   // yt-dlp binary name (must be in PATH)
   YTDLP_BIN: 'yt-dlp',
 
-  // Optional cookies.txt path — needed for Instagram, Facebook private, etc.
-  // Set COOKIES_FILE env var to the absolute path of your Netscape cookies.txt
-  COOKIES_FILE: process.env.COOKIES_FILE || null,
+  // Optional cookies.txt path — supports both relative & absolute paths
+  // Local:  COOKIES_FILE=etc/secrets/cookies.txt
+  // Render: COOKIES_FILE=/etc/secrets/cookies.txt
+  COOKIES_FILE: process.env.COOKIES_FILE
+    ? require('path').resolve(process.cwd(), process.env.COOKIES_FILE)
+    : null,
 
   // Platforms explicitly blocked
   BLOCKED_PLATFORMS: [],
