@@ -26,11 +26,22 @@ module.exports = {
   YTDLP_BIN: 'yt-dlp',
 
   // Optional cookies.txt path — supports both relative & absolute paths
+  // yt-dlp tries to write back to cookies file — so we copy it to writable temp/ dir
   // Local:  COOKIES_FILE=etc/secrets/cookies.txt
-  // Render: COOKIES_FILE=/etc/secrets/cookies.txt
-  COOKIES_FILE: process.env.COOKIES_FILE
-    ? require('path').resolve(process.cwd(), process.env.COOKIES_FILE)
-    : null,
+  // Render: COOKIES_FILE=/etc/secrets/cookies.txt  (read-only, so we copy to temp/)
+  COOKIES_FILE: (() => {
+    if (!process.env.COOKIES_FILE) return null;
+    const path = require('path');
+    const fs   = require('fs');
+    const src  = path.resolve(process.cwd(), process.env.COOKIES_FILE);
+    if (!fs.existsSync(src)) return src; // will warn later in metaFetcher/downloader
+    // Copy to writable location so yt-dlp can update it
+    const tempDir = path.join(process.cwd(), 'temp');
+    if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true });
+    const dest = path.join(tempDir, 'cookies.txt');
+    fs.copyFileSync(src, dest);
+    return dest;
+  })(),
 
   // Platforms explicitly blocked
   BLOCKED_PLATFORMS: [],
