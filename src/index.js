@@ -9,6 +9,7 @@ const { handleMessage } = require('./handlers/message');
 const { handleCallback } = require('./handlers/callback');
 const { BOT_NAME, BOT_VERSION } = require('../config/constants');
 const { isWatermarkEnabled, WATERMARK_PATH } = require('./utils/watermark');
+const { startServer } = require('./server');
 
 // ── Validate environment ─────────────────────────────────────────────────────
 if (!process.env.BOT_TOKEN) {
